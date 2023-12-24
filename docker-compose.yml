@@ -1,0 +1,79 @@
+Dans un environnement de production, il est généralement recommandé d'utiliser des conteneurs distincts pour chaque service afin de bénéficier d'une architecture plus modulaire, évolutive et facilement gérable. De plus, les configurations par défaut des images Docker dans le Docker Hub sont souvent conçues pour être utilisées dans des scénarios de production.
+
+Voici un exemple simplifié avec des services populaires utilisant Docker Compose. Créez un fichier `docker-compose.yml` avec le contenu suivant :
+
+```yaml
+version: '3'
+
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    restart: always
+
+  mail:
+    image: mailhog/mailhog:latest
+    ports:
+      - "8025:8025"
+    restart: always
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    restart: always
+
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: user
+      WORDPRESS_DB_PASSWORD: password
+      WORDPRESS_DB_NAME: mydatabase
+    restart: always
+
+  python:
+    image: python:latest
+    command: tail -f /dev/null
+    restart: always
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "8081:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    restart: always
+
+  ansible:
+    image: ansible/ansible-runner:latest
+    command: tail -f /dev/null
+    restart: always
+
+volumes:
+  jenkins_home:
+```
+
+Cet exemple utilise plusieurs services distincts (nginx, mailhog, MySQL, WordPress, Python, Jenkins, Ansible) et les configure pour fonctionner ensemble à l'aide de Docker Compose. Vous pouvez personnaliser les images, les ports, les configurations, etc., selon vos besoins spécifiques.
+
+Pour exécuter ce Docker Compose, utilisez la commande suivante dans le répertoire où se trouve le fichier `docker-compose.yml` :
+
+```bash
+docker-compose up -d
+```
+
+Cela démarrera tous les services définis dans le fichier `docker-compose.yml` en arrière-plan.
+
+**Notez que :**
+- Assurez-vous d'avoir Docker Compose installé sur votre machine.
+- Ne pas utiliser de mots de passe faibles ou des configurations par défaut dans un environnement de production.
+- Considérez l'utilisation de solutions d'orchestration telles que Kubernetes pour une gestion plus avancée des conteneurs en production.
+- Assurez-vous de sécuriser les services en suivant les meilleures pratiques de sécurité Docker et de chaque service individuel.
+  
+Pour un environnement de production, il est essentiel de prendre en compte la sécurité, la surveillance, la redondance et la gestion des mises à jour pour garantir une infrastructure robuste et fiable.
